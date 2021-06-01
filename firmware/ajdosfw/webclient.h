@@ -1,13 +1,17 @@
 #ifndef WEBCLIENT_H
 #define WEBCLIENT_H
 
+
+
 #include <ESP8266HTTPClient.h>
-#include <PubSubClient.h>
+#include "PubSubClient.h"
 #include <base64.hpp>
+
 
 #define       WC_NONE             0x00
 #define       WC_PRESENT          0x01
 #define       WC_READY            0x03
+
 
 #define       MAX_TRIAL             10
 #define       TRIAL_DELAY         1000
@@ -174,8 +178,9 @@ bool CWEBCLIENT::MQTTTest()
   bool          mqttConnected = false;
   int           nTrialCounter = 0;
     
-  LOGF("MQTT connect %s:%d\r\n", m_lpFLASH->getMqtt()->IP, m_lpFLASH->getMqtt()->Port );
+  LOGF("MQTT connect %s:%d (%s@%s)\r\n", m_lpFLASH->getMqtt()->IP, m_lpFLASH->getMqtt()->Port,m_lpFLASH->getMqtt()->User, m_lpFLASH->getMqtt()->Password );
   mqttClient.setServer( m_lpFLASH->getMqtt()->IP, m_lpFLASH->getMqtt()->Port );
+  /* mqttClient.setBufferSize(512); */
   while ( !(mqttConnected = mqttClient.connected()) &&  nTrialCounter++ < MAX_TRIAL )
   {
     if ( ! mqttClient.connect( m_lpFLASH->getSensor()->Name, m_lpFLASH->getMqtt()->User, m_lpFLASH->getMqtt()->Password ))
@@ -230,7 +235,7 @@ bool CWEBCLIENT::beginSendData()
  
   if ( connect() )
   {
-    LOGF("MQTT connect %s:%d\r\n", m_lpFLASH->getMqtt()->IP, m_lpFLASH->getMqtt()->Port );
+    LOGF("MQTT connect %s:%d (%s@%s)\r\n", m_lpFLASH->getMqtt()->IP, m_lpFLASH->getMqtt()->Port, m_lpFLASH->getMqtt()->User, m_lpFLASH->getMqtt()->Password );
     g_MqttClient.setServer( m_lpFLASH->getMqtt()->IP, m_lpFLASH->getMqtt()->Port );
     while ( !(mqttConnected = g_MqttClient.connected()) &&  nTrialCounter++ < MAX_TRIAL )
     {
@@ -243,6 +248,7 @@ bool CWEBCLIENT::beginSendData()
     if ( mqttConnected )
     {
       LOGLN("MQTT connected");
+      delay(1000);
       return true;
     }
     closeConnection();
@@ -258,6 +264,7 @@ void CWEBCLIENT::endSendData()
 // disconnect from the MQTT server and close the WiFi connection too
 {
   g_MqttClient.disconnect();
+  LOGLN("MQTT close connection");
   closeConnection();  
 }
 //=======================================================================================
@@ -272,7 +279,7 @@ void CWEBCLIENT::sendMQTTHello( char* lpGMTTime )
   char strMessage[1024];
   memset( &strMessage, 0, sizeof(strMessage) );
           
-  snprintf( strMessage, sizeof(strMessage), "{\"name\":\"%s\", \"publickey\":\"%s\", \"owner\":\"%s\", \"station\":\"%s\", \"location\":\"POINT(%f %f %f m)\", \"cycletime\":%d, \"time\":\"%s\", \"crc\":\"%s\"}",
+  snprintf( strMessage, sizeof(strMessage), "{\"name\":\"%s\", \"publickey\":\"%s\", \"owner\":\"%s\", \"station\":\"%s\", \"location\":\"POINT(%f %f %f %f)\", \"cycletime\":%d, \"time\":\"%s\", \"crc\":\"%s\"}",
            m_lpFLASH->getSensor()->Name,
            encodePassword( m_lpFLASH->getSensor()->Password ),
            m_lpFLASH->getSensor()->OwnerId,
@@ -280,6 +287,7 @@ void CWEBCLIENT::sendMQTTHello( char* lpGMTTime )
            m_lpFLASH->getSensor()->Long,                                                 
            m_lpFLASH->getSensor()->Lat,
            m_lpFLASH->getSensor()->Alt,
+           m_lpFLASH->getSensor()->Height,
            m_lpFLASH->getApp()->SleepTime,                         
            lpGMTTime,
            encodePassword( m_lpFLASH->getSensor()->HostPassword )
@@ -288,7 +296,7 @@ void CWEBCLIENT::sendMQTTHello( char* lpGMTTime )
   g_MqttClient.publish( mqtt_sayHello, strMessage );
   LOGF("MQTT %s > %s\r\n", mqtt_sayHello, strMessage );
   memcpy( m_lpFLASH->getOldSensor(), m_lpFLASH->getSensor(), sizeof(SENSORDATA) );
-  delay(2000);                
+  delay(4000);                
 }
 //=======================================================================================
 
@@ -309,7 +317,7 @@ void CWEBCLIENT::sendMQTTBye( char* lpGMTTime )
   g_MqttClient.publish( mqtt_Bye, strMessage );
   LOGF("MQTT %s > %s\r\n", mqtt_Bye, strMessage );
   memset( m_lpFLASH->getOldSensor(), 0, sizeof(SENSORDATA) );
-  delay(2000);                
+  delay(4000);                
 }
 //=======================================================================================
 
@@ -322,12 +330,13 @@ void CWEBCLIENT::sendMQTTData( MEASURE* lpData, char* lpGMTTime )
   char strMessage[1024];
   memset( &strMessage, 0, sizeof(strMessage) );
           
-  snprintf( strMessage, sizeof(strMessage), "{\"name\":\"%s\", \"publickey\":\"%s\", \"location\":\"POINT(%f %f %f m)\", \"values\":{\"temperature\":%0.2f, \"humidity\":%0.2f, \"pm10\":%0.2f, \"pm25\":%0.2f, \"battery\":%0.2f }, \"time\":\"%s\" }",
+  snprintf( strMessage, sizeof(strMessage), "{\"name\":\"%s\", \"publickey\":\"%s\", \"location\":\"POINT(%f %f %f %f)\", \"values\":{\"temperature\":%0.2f, \"humidity\":%0.2f, \"pm10\":%0.2f, \"pm25\":%0.2f, \"battery\":%0.2f }, \"time\":\"%s\" }",
             m_lpFLASH->getSensor()->Name,
             encodePassword( m_lpFLASH->getSensor()->Password ),
             m_lpFLASH->getSensor()->Long,   
             m_lpFLASH->getSensor()->Lat,
             m_lpFLASH->getSensor()->Alt,
+            m_lpFLASH->getSensor()->Height,
                       ( (lpData->Mask & 1) == 1 ) ? lpData->Temperature : -1,
                       ( (lpData->Mask & 1) == 1 ) ? lpData->Humidity    : -1,
                       ( (lpData->Mask & 2) == 2 ) ? lpData->Pm10        : -1,
@@ -337,7 +346,7 @@ void CWEBCLIENT::sendMQTTData( MEASURE* lpData, char* lpGMTTime )
                     );                    
   g_MqttClient.publish( mqtt_Data, strMessage ); 
   LOGF("MQTT %s > %s\r\n", mqtt_Data, strMessage );                                
-  delay(2000);                     
+  delay(4000);                     
 }
 //=======================================================================================
 

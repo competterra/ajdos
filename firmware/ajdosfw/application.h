@@ -139,7 +139,7 @@ void CAPP::deepSleep()
   m_lpFlash->getApp()->LastSleepingTime = uSleep;
   m_lpFlash->Write();
   freeAll();
-  LOGF("WEMOS DEEP SLEEP (%d usec)\n", uSleep );
+  LOGF("WEMOS DEEP SLEEP (%ld msec)\n", uSleep/1000 );
   ESP.deepSleep( uSleep );
 }
 //=======================================================================================

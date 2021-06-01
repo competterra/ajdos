@@ -43,9 +43,10 @@ typedef struct _DSENSOR
   char          OwnerId[64];        // owner id
   char          StationId[64];      // station id  
   char          HostPassword[64];   // HOST WIFI pasword in AP mode see in webserver.h   
-  float         Long;
-  float         Lat;
-  float         Alt;
+  float         Long;               // Longitude
+  float         Lat;                // Lattitude
+  float         Alt;                // Altitude in meter
+  float         Height;             // Ground Height above the Altitude
 } SENSORDATA;
 
 typedef struct _DWIFICONNECTION
@@ -92,12 +93,12 @@ typedef struct _DMEASURE
 
 typedef struct _FD
 {   
-    size_t      Size;                           // size of this structure
-    APPDATA     App;                            // Application data
-    SENSORDATA  Sensor;                         // Sensor data 
-    WIFIDATA    Wifi;                           // WiFi data
-    MQTTDATA    Mqtt;                           // MQTT data    
-    SENSORDATA  OldSensor;                      // Saved sensor data (the bye message stores it )
+    size_t      Size;               // size of this structure
+    APPDATA     App;                // Application data
+    SENSORDATA  Sensor;             // Sensor data 
+    WIFIDATA    Wifi;               // WiFi data
+    MQTTDATA    Mqtt;               // MQTT data    
+    SENSORDATA  OldSensor;          // Saved sensor data (the bye message stores it )
 } FLASHDATA;
 
 
@@ -315,7 +316,7 @@ char* CFLASHDATA::getSensorJSON()
 //--------------------------------------------------------------
 {  
   memset( &m_JSON, 0, sizeof( m_JSON ) );
-  snprintf( m_JSON, sizeof(m_JSON), "\"main\":{\"name\":\"%s\",\"password\":\"%s\",\"owner\":\"%s\",\"station\":\"%s\",\"lat\":\"%.8f\",\"long\":\"%.8f\",\"alt\":\"%.8f\"}", m_Mem.Sensor.Name, m_Mem.Sensor.Password, m_Mem.Sensor.OwnerId, m_Mem.Sensor.StationId, m_Mem.Sensor.Lat, m_Mem.Sensor.Long, m_Mem.Sensor.Alt );
+  snprintf( m_JSON, sizeof(m_JSON), "\"main\":{\"name\":\"%s\",\"password\":\"%s\",\"owner\":\"%s\",\"station\":\"%s\",\"lat\":\"%.8f\",\"long\":\"%.8f\",\"alt\":\"%.8f\",\"height\":\"%.8f\"}", m_Mem.Sensor.Name, m_Mem.Sensor.Password, m_Mem.Sensor.OwnerId, m_Mem.Sensor.StationId, m_Mem.Sensor.Lat, m_Mem.Sensor.Long, m_Mem.Sensor.Alt, m_Mem.Sensor.Height );
   return &m_JSON[0];
 }
 //==============================================================

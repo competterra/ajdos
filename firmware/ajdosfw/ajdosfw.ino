@@ -9,8 +9,7 @@
  *  
  **************************************************************************************/
 
-#define   DEBUG
-
+#define  DEBUG
 #include "debug.h"
 #include "time.h"
 #include "application.h"

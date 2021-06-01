@@ -49,6 +49,7 @@ function loadFinishPage( page )
 
 function loadData()
 {
+    
     if ( false === readModal )
         readModal = new bootstrap.Modal(document.getElementById('modal-reading'), { keyboard: false  });     
     if ( false === saveModal )
@@ -56,7 +57,7 @@ function loadData()
 
     saveModal.hide();
     readModal.show();
-    /*
+    
     var x = new XMLHttpRequest();
     x.open("GET", "/properties", true);
     x.onload = function ()
@@ -71,10 +72,10 @@ function loadData()
         alert("Read error ("+x.status+")");
     }
     x.send(null);
-    */
     
-    
-    var fakeData = '{"main":{"name":"bp-test","lat":"47.43915","long":"19.21384","password":"12345678","owner":"fincygo","station":"home"},';
+
+    /*
+    var fakeData = '{"main":{"name":"bp-test","lat":"47.43915","long":"19.21384","alt":"183","height":"3","password":"12345678","owner":"fincygo","station":"home"},';
     fakeData += '"measuring":{"cycle":"60", "lag":"0" },';
     fakeData += '"wifi":{"ssid":"WIFIName","pwd":"WIFIPass", "tested":false },';
     fakeData += '"send":{"ip":"185.68.73.135","port":"1883","user":"admin","pwd":"admin", "tested":false },';
@@ -82,7 +83,7 @@ function loadData()
     let props = JSON.parse( fakeData );
     fillData( props );                
     readModal.hide();
-    
+    */
     
 }
 
@@ -298,7 +299,8 @@ function saveHome()
     param += "station="+$("#set-main-station").val()+"&";
     param += "lat="+$("#set-main-lat").val().toString()+"&";
     param += "long="+$("#set-main-long").val().toString()+"&";
-    param += "alt="+$("#set-main-alt").val().toString();
+    param += "alt="+$("#set-main-alt").val().toString()+"&";
+    param += "height="+$("#set-main-height").val().toString();
     saveData("/set-sensor", param, "Home");
   }
 }

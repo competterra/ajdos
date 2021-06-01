@@ -208,7 +208,12 @@ void setsensor()
         {
             g_lpFLASH->getSensor()->Alt = g_lpWEBServer->arg(i).toFloat();
             bChanged = true;
-        }        
+        }
+        if ( g_lpWEBServer->argName(i) == String("height") && (g_lpFLASH->getSensor()->Height != g_lpWEBServer->arg(i).toFloat()) )
+        {
+            g_lpFLASH->getSensor()->Height = g_lpWEBServer->arg(i).toFloat();
+            bChanged = true;
+        }
       }
       if ( bChanged )
       {
