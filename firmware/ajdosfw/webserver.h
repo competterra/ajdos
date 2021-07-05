@@ -303,8 +303,10 @@ void setwifi()
         if ( g_lpWEBServer->argName(i) == String("pwd") )
         {
             g_lpFLASH->getApp()->TestResult = false;
-            g_lpFLASH->getWifi()->Tested    = false;          
-            strncpy( g_lpFLASH->getWifi()->Connect[0].Password, g_lpWEBServer->arg(i).c_str(), 64 );
+            g_lpFLASH->getWifi()->Tested    = false;     
+            memset( &g_lpFLASH->getWifi()->Connect[0].Password, 0, sizeof( g_lpFLASH->getWifi()->Connect[0].Password ) );
+            if ( strlen( g_lpWEBServer->arg(i).c_str()) > 0 )
+              strncpy( g_lpFLASH->getWifi()->Connect[0].Password, g_lpWEBServer->arg(i).c_str(), 64 );
             bChanged = true;
         }
       }
@@ -349,6 +351,12 @@ void setmqtt()
         if ( g_lpWEBServer->argName(i) == String("pwd") )
         {
             strncpy( g_lpFLASH->getMqtt()->Password, g_lpWEBServer->arg(i).c_str(), 64 );
+            bChanged = true;
+        }
+
+        if ( (g_lpWEBServer->argName(i) == String("hello")) && ( g_lpWEBServer->arg(i).toInt() == 1 ) )
+        {
+            g_lpFLASH->getMqtt()->SendHello = true;
             bChanged = true;
         }
       }

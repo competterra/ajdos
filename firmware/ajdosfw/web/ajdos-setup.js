@@ -317,8 +317,10 @@ function saveMeasuring()
 
 function saveWifi()
 {
-  if ( notEmpty('set-wifi-ssid') && notEmpty('set-wifi-pwd') )
+  if ( notEmpty('set-wifi-ssid') )
   {
+    if  ( ! notEmpty('set-wifi-pwd') )
+      alert("Warning! The connection without password is unsafe.");
     var param = "ssid="+$("#set-wifi-ssid").val()+"&";
     param += "pwd="+$("#set-wifi-pwd").val();
     saveData("/set-wifi", param, "WiFi");
@@ -332,7 +334,8 @@ function saveSend()
     var param = "ip="+$("#set-send-ip").val()+"&";
     param += "port="+$("#set-send-port").val().toString()+"&";
     param += "user="+$("#set-send-user").val()+"&";
-    param += "pwd="+$("#set-send-pwd").val();
+    param += "pwd="+$("#set-send-pwd").val()+"&";
+    param += "hello="+( $('#chkHello').prop('checked') ? "1":"0" );
     saveData("/set-mqtt", param, "Broker");
   }
 }

@@ -190,10 +190,10 @@
               <div class="input-group-prepend">
                   <div class="input-group-text"><span style="width:5rem; text-align:right;">Cycle</span></div>
               </div>
-              <input id="set-measuring-cycle" type="number" class="form-control" placeholder="60" min="30" max="1440">
+              <input id="set-measuring-cycle" type="number" class="form-control" placeholder="60" min="30" max="1440" style="min-width:4em;">
             </div>
           </div>
-          <div class="col"><div class="input-group"><p style="margin: 0.4em 0 0 -1.5em;">minutes (30-1440)</p></div></div>          
+          <div class="col"><div class="input-group"><p style="margin: 0.4em 0 0 -1.5em; font-size: 0.8em; margin-top: 0;">minutes<br/>(30-1440)</p></div></div>          
         </div>
 
         <div class="row" style="margin-top: 0.4em;">
@@ -202,10 +202,10 @@
               <div class="input-group-prepend">
                   <div class="input-group-text"><span style="width:5rem; text-align:right;">Lag time</span></div>
               </div>
-              <input id="set-measuring-lag" type="number" class="form-control" placeholder="1" min="0" max="180">
+              <input id="set-measuring-lag" type="number" class="form-control" placeholder="1" min="0" max="180" style="min-width:4em;">
             </div>
           </div>
-          <div class="col"><div class="input-group"><p style="margin: 0.4em 0 0 -1.5em;">seconds (0-180)</p></div></div>          
+          <div class="col"><div class="input-group"><p style="margin: 0.4em 0 0 -1.5em; font-size: 0.8em; margin-top: 0;">seconds<br/>(0-180)</p></div></div>          
         </div>        
         <br/>
 
@@ -287,6 +287,13 @@
                   <div class="input-group-text"><span style="width:5rem; text-align:right;">Password</span></div>
               </div>
               <input id="set-send-pwd" type="text" class="form-control" placeholder="user password">
+          </div>
+        </div>
+        <br/>
+        <div class="form-row align-item-leftr my-2" style="padding-left: 3em;">
+          <div class="input-group">
+            <label class="form-check-label" for="chkHello">Send "Hello" message</label>
+            <input class="form-check-input" type="checkbox" value="" id="chkHello" unchecked>            
           </div>
         </div>
 
@@ -392,9 +399,11 @@
       <div class="container-fluid">
         <h3 class="display-8">AJDOS <small>AIR POLLUTION SENSOR v1.0</small></h3>
         <p><strong>The sensor is testing...</strong></p>
-        <p>The sensor will connect to the configured WiFi and the given server.<br/>
-          The testing may take longer. During the test, the setup program will lost the connection to the sensor.<br/><br/>
-          The setup program will try to connect to the sensor within 3 minutes, but you can do it manually by refreshing the browser.<br/>
+        <p>The sensor will connect to the configured WiFi and the MQTT Broker server.<br/>
+          The test may take longer. During the test, the setup program loses the connection with the sensor.<br/><br/>
+          Depending on the running time of the test, your mobile phone or laptop may forget the wifi name of the sensor.<br/>
+          The setup program can be resumed once the connection is restored.<br/><br/>
+          The setup program will try to reload the setup page 3 minutes after starting the test. If this does not work automatically, you will need to manually refresh your browser.<br/>
           Upon test completion this setup program will give you the "test" option, where the testing result can be seen.</p>
       </div>
     </div>
