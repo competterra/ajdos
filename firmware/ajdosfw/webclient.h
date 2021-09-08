@@ -113,7 +113,10 @@ bool CWEBCLIENT::connect()
     LOGF("Wifi connect to %s\r\n", m_lpFLASH->getWifi()->Connect[ nUsed ].SSID );
     if ( m_lpFLASH->getWifi()->Connect[ nUsed ].SSID[0] != '\0' )
     {
-      WiFi.begin( m_lpFLASH->getWifi()->Connect[ nUsed ].SSID, m_lpFLASH->getWifi()->Connect[ nUsed ].Password );
+      if ( strlen(m_lpFLASH->getWifi()->Connect[ nUsed ].Password) == 0 )
+        WiFi.begin( m_lpFLASH->getWifi()->Connect[ nUsed ].SSID );
+      else
+        WiFi.begin( m_lpFLASH->getWifi()->Connect[ nUsed ].SSID, m_lpFLASH->getWifi()->Connect[ nUsed ].Password );
       int nTrialCounter = 0;
       while ( WiFi.status() != WL_CONNECTED && nTrialCounter++ < MAX_TRIAL )
       {
